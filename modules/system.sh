@@ -141,10 +141,10 @@ system_install() {
 		webbrowser-app
 
 	# Update system
-	system_update
+	apt_update
 
 	# Upgrade system
-	system_upgrade
+	apt_upgrade
 		
 	# Update local time
 	system_localtime $LOCALTIME

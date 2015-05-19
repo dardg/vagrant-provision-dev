@@ -22,7 +22,7 @@ function rvm_uninstall {
 # Install
 # -----------------------------------------------------------------------------
 function rvm_install {
-	system_install \
+	apt_install \
 		libgdbm-dev \
 		libncurses5-dev \
 		automake \

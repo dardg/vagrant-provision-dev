@@ -10,7 +10,7 @@
 # vagrant plugin install vagrant-vbox-snapshot
 
 # vmware_fusion | virtualbox
-ENV['VAGRANT_DEFAULT_PROVIDER'] = 'virtualbox'
+ENV['VAGRANT_DEFAULT_PROVIDER'] = 'vmware_fusion'
 
 
 Vagrant.configure(2) do |config|
@@ -43,8 +43,8 @@ Vagrant.configure(2) do |config|
   config.vm.provider "vmware_fusion" do |v|
     v.gui = true
     v.vmx["name"] = "Vagrant Docker - Development"
-    v.vmx["memsize"] = "1024"
-    v.vmx["numvcpus"] = "2"
+    v.vmx["memsize"] = "4096"
+    v.vmx["numvcpus"] = "4"
   end
   
   config.vm.provision :shell, :path => "provision.sh", privileged: false
