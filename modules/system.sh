@@ -110,7 +110,6 @@ system_install() {
 		brasero-common \
 		empathy-common \
 		empathy \
-		firefox \
 		gir1.2-rb-3.0 \
 		gnome-contacts \
 		gnome-mahjongg \
