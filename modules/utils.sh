@@ -1,11 +1,34 @@
-#!/bin/bash -x
-LOG_DIR="~/provision"
+#!/bin/bash 
+NOW="`date +"%Y%m%d_%H%M%S"`"
+LOG_DIR="/home/vagrant/provision-${NOW}"
+# -----------------------------------------------------------------------------
+# Prepares the provisioning
+# -----------------------------------------------------------------------------
+prepare_log_dir() {
+	log_info "creating directory ${LOG_DIR}"	
+	return $(mkdir ${LOG_DIR})
+}
+
 # -----------------------------------------------------------------------------
 # Checks if $1 is a function
 # -----------------------------------------------------------------------------
 is_function() {
     declare -F $1 &> /dev/null
     return $?
+}
+
+# -----------------------------------------------------------------------------
+# Check network connection
+# -----------------------------------------------------------------------------
+check_internet_connection() {
+
+	local INTERNET_DNS=http://www.google.com
+	wget -q --tries=5 --timeout=20 --spider ${INTERNET_DNS}
+	if [[ $? -eq 0 ]]; then
+        	return 0
+	else
+        	return 1
+	fi
 }
 
 # -----------------------------------------------------------------------------
@@ -171,7 +194,8 @@ function apt_purge {
 	for pack in $@;
 	do 
 		log_info "Removing package ${pack}"
-		sudo apt-get purge --auto-remove -y -q ${pack}  >/dev/null 2>&1;
+		echo "apt_purge start - ${pack} - `date`"  >>${LOG_DIR}/apt_purge.log 2>&1;
+		sudo apt-get purge --auto-remove -y -q ${pack}  >>${LOG_DIR}/apt_purge.log 2>&1;
 	done
 }
 
@@ -180,7 +204,9 @@ function apt_purge {
 # -----------------------------------------------------------------------------
 function apt_update {
   log_info "Updating OS"
-  sudo apt-get update -y >/dev/null 2>&1
+  sudo apt-key update -y >${LOG_DIR}/apt_update_key.log 2>&1
+  sudo apt-get update -y >${LOG_DIR}/apt_update.log 2>&1
+  sudo apt-get update -y --fix-missing >${LOG_DIR}/apt_update_missing.log 2>&1
 }
  
 # -----------------------------------------------------------------------------
@@ -188,7 +214,12 @@ function apt_update {
 # -----------------------------------------------------------------------------
 function apt_upgrade {
   log_info "Upgrading OS"
-  sudo apt-get dist-upgrade -y -q >/dev/null 2>&1
+  sudo apt-get upgrade -y -q >${LOG_DIR}/apt_upgrade.log 2>&1
+  #sudo apt-get dist-upgrade -y -q >${LOG_DIR}/apt_upgrade_dist.log 2>&1
+  sudo apt-get install -y -q unattended-upgrades >${LOG_DIR}/apt_upgrade_unattended.log 2>&1
+  sudo apt-get install -y -q debian-goodies >${LOG_DIR}/apt_install_debian-goodies.log 2>&1
+  log-info "Updating Vmware Tools"
+  fix_vmware_tools_script
 }
 
 # -----------------------------------------------------------------------------
@@ -199,9 +230,50 @@ function apt_install {
 	for pack in $@;
 	do 
 		log_info "Installing package ${pack}"
-    	sudo apt-get install -y -q ${pack} >/dev/null 2>&1
+    	echo "apt_install start - ${pack} - `date`" >>${LOG_DIR}/apt_install_${pack}.log 2>&1
+    	sudo apt-get install -y -q ${pack} >>${LOG_DIR}/apt_install_${pack}.log 2>&1
 	done
 }
+
+# -----------------------------------------------------------------------------
+# Install the given packages to the system
+# $@ the packages to be installed
+# -----------------------------------------------------------------------------
+function apt_install_full {
+	for pack in $@;
+	do 
+		log_info "Installing full package ${pack} with suggestions & recommendations"
+    	echo "apt_install-full start - ${pack} - `date`" >>${LOG_DIR}/apt_install_${pack}.log 2>&1
+    	sudo apt-get install --install-suggests -y -q ${pack} >>${LOG_DIR}/apt_install_${pack}.log 2>&1
+	done
+}
+
+# -----------------------------------------------------------------------------
+# Force Install the given packages to the system
+# $@ the packages to be installed
+# -----------------------------------------------------------------------------
+function apt_force_install {
+	for pack in $@;
+	do 
+		log_info "Force Installing package ${pack}"
+    	echo "apt_force_install start - ${pack} - `date`" >>${LOG_DIR}/apt_install_${pack}.log 2>&1
+    	sudo apt-get install -y --force-yes -q ${pack} >>${LOG_DIR}/apt_install_${pack}.log 2>&1
+	done
+}
+
+# -----------------------------------------------------------------------------
+# Install from package file the given packages to the system
+# $@ the packagefile containing the packages to be installed
+# -----------------------------------------------------------------------------
+function apt_install_from_packagefile {
+	for packagefile in $@;
+	do 
+		log_info "Installing package from packagefile ${packagefile}"
+    		echo "apt_install_from_packagefile start - ${packagefile} - `date`" >>${LOG_DIR}/apt_install_${packagefile}.log 2>&1
+         	cat ${packagefile}| xargs sudo apt-get install -y >>${LOG_DIR}/apt_install_${packagefile}.log 2>&1
+	done
+}
+
 
 
 # -----------------------------------------------------------------------------
@@ -212,7 +284,7 @@ function apt_repository_add {
 	
 	if ( ! apt_repository_is_added $1 ); then
 		log_info "Adding repository $1"
-		sudo add-apt-repository -y ppa:$1 >/dev/null 2>&1
+		sudo add-apt-repository -y ppa:$1 >${LOG_DIR}/apt_repository_add.log 2>&1
 		apt_update
 	fi	
 }
@@ -225,10 +297,11 @@ function apt_repository_remove {
 	
 	if ( apt_repository_is_added $1 ); then
 		log_info "Removing repository $1"
-		sudo add-apt-repository --remove -y ppa:$1 >/dev/null 2>&1
+		sudo add-apt-repository --remove -y ppa:$1 >${LOG_DIR}/apt_repository_remove.log 2>&1
 		apt_update
 	fi	
 }
+
 
 # -----------------------------------------------------------------------------
 # Check if a package is installed. 
@@ -236,7 +309,8 @@ function apt_repository_remove {
 # $1 package name
 # -----------------------------------------------------------------------------
 function apt_is_installed {
-	return $(dpkg-query -W -f='${Status}' $1 2>/dev/null | grep -c "ok installed" | grep -c 0)
+	echo "apt_is_installed start - ${pack} - `date`" >>${LOG_DIR}/apt_is_installed_error.log
+	return $(dpkg-query -W -f='${Status}' $1 2>>${LOG_DIR}/apt_is_installed_error.log | grep -c "ok installed" | grep -c 0)
 }
 
 # -----------------------------------------------------------------------------

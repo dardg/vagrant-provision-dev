@@ -12,16 +12,27 @@
 # vmware_fusion | virtualbox
 ENV['VAGRANT_DEFAULT_PROVIDER'] = 'vmware_fusion'
 
+# Ensure that VMWare Tools recompiles kernel modules
+# when we update the linux images
+$fix_vmware_tools_script = <<SCRIPT
+sed -i.bak 's/answer AUTO_KMODS_ENABLED_ANSWER no/answer AUTO_KMODS_ENABLED_ANSWER yes/g' /etc/vmware-tools/locations
+sed -i.bak 's/answer AUTO_KMODS_ENABLED no/answer AUTO_KMODS_ENABLED yes/g' /etc/vmware-tools/locations
+SCRIPT
 
 Vagrant.configure(2) do |config|
 
   config.vm.box = "boxcutter/ubuntu1404-desktop"
   
   # config.vm.network "forwarded_port", guest: 80, host: 8080
-  config.vm.network "private_network", ip: "192.168.33.150"
+  #config.vm.network "private_network", ip: "192.168.33.150"
+  #config.vm.network "private_network", ip: "192.168.143.10"
+  config.vm.network "forwarded_port", guest: 80, host: 10080
+  config.vm.network "forwarded_port", guest: 8080, host: 18080
 
-  config.vm.synced_folder ".", "/vagrant"
-  config.vm.synced_folder "~/Documents/GitHub", "/home/vagrant/Documents/GitHub"
+  #config.vm.synced_folder "./home", "/home"
+  #config.vm.synced_folder "~/Documents/GitHub", "/home/vagrant/Documents/GitHub"
+  config.vm.synced_folder "./data/", "/data"
+  config.vm.synced_folder "/Volumes", "/volumes"
 
   config.vm.define "vagrant-dev" do |foohost|
   end
@@ -43,12 +54,15 @@ Vagrant.configure(2) do |config|
   config.vm.provider "vmware_fusion" do |v|
     v.gui = true
     v.vmx["name"] = "Vagrant Docker - Development"
-    v.vmx["memsize"] = "4096"
+    #v.vmx["memsize"] = "4096"
+    v.vmx["memsize"] = "3072"
     v.vmx["numvcpus"] = "4"
   end
   
-  config.vm.provision :shell, :path => "provision.sh", privileged: false
-  
+  config.vm.provision :shell, inline: $fix_vmware_tools_script
+  config.vm.provision :shell, :path => "provision_os.sh", privileged: false
+  config.vm.provision :reload
+  config.vm.provision :shell, :path => "provision_dev.sh", privileged: false
   config.vm.provision :reload
   
 

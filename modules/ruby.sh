@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/bin/bash -x
 
 RVM_DIR=$HOME/.rvm
-RUBY_VERSION=2.2.1
+RUBY_VERSION=2.2.2
 
 if [  -f $RVM_DIR/scripts/rvm ]; then source $RVM_DIR/scripts/rvm; fi
 

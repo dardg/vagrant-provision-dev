@@ -9,10 +9,10 @@ KEYBOARD="fr+mac"
 system_cleanup() {
   log_info "Cleaning up"
  
-  sudo apt-get -f install >/dev/null 2>&1
-  sudo apt-get autoremove >/dev/null 2>&1
-  sudo apt-get -y autoclean >/dev/null 2>&1
-  sudo apt-get -y clean >/dev/null 2>&1  
+  sudo apt-get -f install >${LOG_DIR}/apt_get_install 2>&1
+  sudo apt-get -y autoremove >${LOG_DIR}/apt_get_autoremove 2>&1
+  sudo apt-get -y autoclean >${LOG_DIR}/apt_get_autoclean 2>&1
+  sudo apt-get -y clean >${LOG_DIR}/apt_get_clean 2>&1  
 
 }
 
@@ -153,4 +153,12 @@ system_install() {
 
 	# System clean up
 	system_cleanup
+
+	# Install System tools
+	apt_install_full sysstat
+	apt_install_full p7zip-full
+	apt_install_full dar
+	apt_install vim
+	apt_install krusader
+
 }

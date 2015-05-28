@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash 
 
 # -----------------------------------------------------------------------------
 # Check if already installed
@@ -18,8 +18,8 @@ function chrome_uninstall {
 # -----------------------------------------------------------------------------
 # Install
 # -----------------------------------------------------------------------------
-function chrome_install {
-	local DEB="deb http://dl.google.com/linux/chrome/deb/ stable main"
+function chrome2_install {
+	local DEB="deb http://dl.google.com/linux/deb/ stable non-free main"
 
 	if [[ ! -f /etc/apt/sources.list.d/google-chrome.list ]]; then
 		wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - 
@@ -29,3 +29,16 @@ function chrome_install {
 
 	apt_install google-chrome-stable
 }
+
+function chrome_install {
+#	local DEB="deb http://dl.google.com/linux/deb/ stable non-free main"
+#
+#	if [[ ! -f /etc/apt/sources.list.d/google.list ]]; then
+#		wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - 
+#		echo $DEB | sudo tee --append /etc/apt/sources.list.d/google.list
+#		apt_update
+#	fi
+
+	apt_force_install google-chrome-stable
+}
+

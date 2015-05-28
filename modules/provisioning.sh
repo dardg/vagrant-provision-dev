@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash 
 #==============================================================================
 
 source /vagrant/modules/utils.sh
@@ -80,10 +80,16 @@ provision_is_installed() {
 	fi
 }
 
+# -----------------------------------------------------------------------------
+# provision_usage
+# -----------------------------------------------------------------------------
 provision_usage() {
 	log_info "Usage: provision install <module> | provision uninstall <module> | provision reinstall <module>"
 }
 
+# -----------------------------------------------------------------------------
+# provisio
+# -----------------------------------------------------------------------------
 provision() {
 	action=$1
 	module=$2
@@ -99,18 +105,26 @@ provision() {
 	fi
 }
 
-provision install system
+# -----------------------------------------------------------------------------
+# prepare
+# -----------------------------------------------------------------------------
+prepare(){
+	if( ! prepare_log_dir ); then 
+		log_error "Unable to prepare the provision"
+	else
+		log_info "Provisioning prepared. Logs can be found in ${LOG_DIR}"
+	fi
+}
 
-provision install docker
-provision install docker-mysql
-provision install java8
-provision install maven3
-provision install eclipse
-provision install nvm
-provision install node
-provision install yeoman
-provision install rvm
-provision install ruby
-provision install chrome
-provision install sublimetext3
-provision install sts
+# -----------------------------------------------------------------------------
+# check_connected_with_internet
+# -----------------------------------------------------------------------------
+check_connected_with_internet(){
+	if(  check_internet_connection ); then
+		log_error "Error : no working internet connection found. Aborting."
+		exit 1
+	else
+		log_info "Internet connection working as espected. Continuing."
+	fi
+}
+
