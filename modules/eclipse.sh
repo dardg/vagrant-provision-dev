@@ -15,6 +15,17 @@ ECLIPSE_REPOS=$ECLIPSE_REPOS,http://download.eclipse.org/tools/cdt/releases/luna
 ECLIPSE_REPOS=$ECLIPSE_REPOS,http://download.eclipse.org/technology/m2e/releases
 ECLIPSE_FEATURES=org.eclipse.m2e.feature.feature.group,org.eclipse.m2e.logback.feature.feature.group
 
+# Ansi Console
+ECLIPSE_REPOS=$ECLIPSE_REPOS,http://www.mihai-nita.net/eclipse
+ECLIPSE_FEATURES=net.mihai-nita.ansicon.feature.group
+
+# Eclipse Marketplace Client
+ECLIPSE_FEATURES=org.eclipse.epp.mpc.feature.group
+
+# jadEclipse
+ECLIPSE_REPOS=$ECLIPSE_REPOS,http://feeling.sourceforge.net/update
+ECLIPSE_FEATURES=org.sf.feeling.decompiler.feature.group
+
 # egit
 ECLIPSE_REPOS=$ECLIPSE_REPOS,http://download.eclipse.org/egit/updates
 ECLIPSE_FEATURES=$ECLIPSE_FEATURES,org.eclipse.egit.feature.group,org.eclipse.jgit.feature.group
@@ -24,7 +35,7 @@ ECLIPSE_FEATURES=$ECLIPSE_FEATURES,org.eclipse.egit.feature.group,org.eclipse.jg
 # Return 0 if installed, 1 otherwise
 # -----------------------------------------------------------------------------
 function eclipse_is_installed {
-	return $(ls /opt/eclipse/ 2>//dev/null | grep -c eclipse | grep -c 0)
+	return $(ls /opt/eclipse/ 2>/dev/null | grep -c eclipse | grep -c 0)
 }
 
 # -----------------------------------------------------------------------------
