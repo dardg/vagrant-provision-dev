@@ -223,6 +223,14 @@ function apt_upgrade {
 }
 
 # -----------------------------------------------------------------------------
+# Upgrade the system
+# -----------------------------------------------------------------------------
+function apt_upgrade_always {
+  log_info "Upgrading OS ALWAYS"
+  sudo apt-get install -y -q unattended-upgrades >${LOG_DIR}/apt_upgrade_unattended.log 2>&1
+}
+
+# -----------------------------------------------------------------------------
 # Install the given packages to the system
 # $@ the packages to be installed
 # -----------------------------------------------------------------------------
@@ -270,7 +278,7 @@ function apt_install_from_packagefile {
 	do 
 		log_info "Installing package from packagefile ${packagefile}"
     		echo "apt_install_from_packagefile start - ${packagefile} - `date`" >>${LOG_DIR}/apt_install_${packagefile}.log 2>&1
-         	cat ${packagefile}| xargs sudo apt-get install -y >>${LOG_DIR}/apt_install_${packagefile}.log 2>&1
+         	xargs -a ${packagefile} -I file echo Installing file ; sudo apt-get -y install file >>${LOG_DIR}/apt_install_${packagefile}.log 2>&1
 	done
 }
 

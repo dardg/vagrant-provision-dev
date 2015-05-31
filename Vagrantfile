@@ -64,6 +64,7 @@ Vagrant.configure(2) do |config|
   config.vm.provision :reload
   config.vm.provision :shell, :path => "provision_dev.sh", privileged: false
   config.vm.provision :reload
+  config.vm.provision :shell, :path => "provision_os_always.sh", run: "always", privileged: false
   
 
 

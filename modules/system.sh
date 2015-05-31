@@ -159,6 +159,7 @@ system_install() {
 	apt_install_full p7zip-full
 	apt_install_full dar
 	apt_install vim
+	apt_install moreutils
 	apt_install krusader
 
 }
