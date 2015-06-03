@@ -26,6 +26,14 @@ ECLIPSE_FEATURES=org.eclipse.epp.mpc.feature.group
 ECLIPSE_REPOS=$ECLIPSE_REPOS,http://feeling.sourceforge.net/update
 ECLIPSE_FEATURES=org.sf.feeling.decompiler.feature.group
 
+# color team moonrise
+ECLIPSE_REPOS=$ECLIPSE_REPOS,https://raw.github.com/guari/eclipse-ui-theme/master/com.github.eclipseuitheme.themes.updatesite
+ECLIPSE_FEATURES=$ECLIPSE_FEATURES,com.github.eclipseuitheme.themes.feature.feature.group
+
+# eclipse color team
+ECLIPSE_REPOS=$ECLIPSE_REPOS,https://eclipse-color-theme.github.com/update
+ECLIPSE_FEATURES=$ECLIPSE_FEATURES,com.github.eclipsecolortheme.themes.feature.feature.group
+
 # egit
 ECLIPSE_REPOS=$ECLIPSE_REPOS,http://download.eclipse.org/egit/updates
 ECLIPSE_FEATURES=$ECLIPSE_FEATURES,org.eclipse.egit.feature.group,org.eclipse.jgit.feature.group
