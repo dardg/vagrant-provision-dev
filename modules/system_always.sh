@@ -1,4 +1,4 @@
-#!/bin/bash set -x
+#!/bin/bash +x
 
 LOCALTIME="/usr/share/zoneinfo/Europe/Brussels"
 KEYBOARD="fr+mac"

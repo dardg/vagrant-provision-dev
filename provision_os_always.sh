@@ -1,4 +1,4 @@
-#!/bin/bash set -x
+#!/bin/bash +x
 #==============================================================================
 source /vagrant/modules/provisioning.sh
 
